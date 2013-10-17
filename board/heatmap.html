@@ -7,7 +7,7 @@
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://d3js.org/d3.hexbin.v0.min.js"></script>
 <script>
-d3.csv("mouse_pos.csv", function(err, data) {
+d3.csv("/data/mouse_pos.csv", function(err, data) {
   var margin = {top: 0, right: 0, bottom: 0, left: 0},
   width = 1280 - margin.left - margin.right,
   height = 800 - margin.top - margin.bottom;

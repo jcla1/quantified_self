@@ -1,4 +1,4 @@
-d3.json("stats.json", function(err, data) {
+d3.json("/data/stats.json", function(err, data) {
   var cards = d3.select("#cards")
       .selectAll("li").data(data)
     .enter().append("li");

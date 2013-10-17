@@ -37,7 +37,7 @@ function round6(d, end) {
 }
 
 
-d3.csv("activity_log.csv", function(data) {
+d3.csv("/data/activity_log.csv", function(data) {
   var margin = {top: 10, right: 7, bottom: 20, left: 40},
     width = 860 - margin.left - margin.right,
     height = 520 - margin.top - margin.bottom;

@@ -1,5 +1,5 @@
-//d3.csv("mouse_pos.csv", function(err, data) {
-d3.json("mouse.json", function(err, data) {
+//d3.csv("/data/mouse_pos.csv", function(err, data) {
+d3.json("/data/mouse.json", function(err, data) {
   var margin = {top: 10, right: 20, bottom: 10, left: 20},
   width = 860 - margin.left - margin.right,
   height = 520 - margin.top - margin.bottom;
