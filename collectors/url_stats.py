@@ -29,6 +29,11 @@ def num_github_repos(urls):
             [urlparse(x) for x in set(urls)]
             ]))
 
+def num_youtube_vids(urls):
+    return len(filter(
+        lambda x: re.search("http\:\/\/www.youtube.com\/watch\?v\=", x),
+        set(urls)))
+
 def main():
     urls = list(sys.stdin)
     print "%s,%d" % ("num_sites", num_sites(urls))
@@ -42,6 +47,7 @@ def main():
     print "%s,%d" % ("num_wikipedia", de+en+other)
 
     print "%s,%d" % ("num_github_repos", num_github_repos(urls))
+    print "%s,%d" % ("num_youtube_vids", num_youtube_vids(urls))
 
 if __name__ == "__main__":
     main()
