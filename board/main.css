@@ -25,15 +25,20 @@ h2 {
   margin: 0 0 20px 0;
 }
 
-#cards {
+.cards {
   list-style: none;
   display: inline-block;
-  margin-bottom: 20px;
+  /*margin-bottom: 20px;*/
+  margin-bottom: 0;
 
   padding: 0 40px 0 40px;
 }
 
-#cards li {
+.cards.big {
+  margin-top: 0;
+}
+
+.cards li {
   width: 230px;
   height: 130px;
   float: left;
@@ -46,7 +51,15 @@ h2 {
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
 }
 
-#cards li div.title {
+.cards.big li {
+  width: 750px;
+  height: 200px;
+
+  margin: 0 15px 60px 15px;
+}
+
+
+.cards li h2 {
   font-weight: bold;
   font-size: 16px;
 
@@ -56,17 +69,22 @@ h2 {
   color: #888;
 }
 
-#cards li div.value {
+.cards.big li h2 {
+  font-size: 18px;
+  margin: 25px 0 5px 0;
+}
+
+.cards li div.value {
   font-size: 54px;
   height: 36px
 }
 
-#cards li div.subtext {
+.cards li div.subtext {
   margin: 20px 0 0 0;
   font-family: Helvetica Neue;
 }
 
-#cards li div.subtext span {
+.cards li div.subtext span {
   font-family: "HelveticaNeue-CondensedBold";
   font-size: 18px;
 }
@@ -139,3 +157,13 @@ svg .day {
   margin-bottom: 20px
 }
 
+
+.distr .bar {
+  fill: #333;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}

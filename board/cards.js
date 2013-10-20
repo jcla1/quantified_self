@@ -3,8 +3,7 @@ d3.json("/data/stats.json", function(err, data) {
       .selectAll("li").data(data)
     .enter().append("li");
 
-  cards.append("div")
-    .attr('class', "title")
+  cards.append("h2")
     .html(function(d) { return d.title; });
 
   cards.append("div")
