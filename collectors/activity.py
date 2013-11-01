@@ -2,6 +2,14 @@ from sys import stdin, stdout
 from itertools import groupby
 import csv
 
+# These are the timezone offsets from UTC
+# We need them because `date` always gives
+# time in sec since epoch in UTC!
+timezone_offsets = {
+    "CEST": 7200,
+    "CET": 3600
+}
+
 
 # This recursive version worked well, but when there were too many
 # events the call stack size was exceeded, so it failed
@@ -43,9 +51,9 @@ def times_to_intervals(program, times):
     return rows
 
 def main():
-    valid_programs = ["Google Chrome", "Sublime Text 2", "iTerm", "Finder", "Xcode", "Picasa", "Activity Monitor"]
+    valid_programs = ["Google Chrome", "Sublime Text 2", "iTerm", "Finder", "Xcode", "Activity Monitor"]
     program_name = lambda x: x[3]
-    time_lambda = lambda x: int(x[0])
+    time_lambda = lambda x: int(x[0]) + timezone_offsets[x[1]]
 
     reader = csv.reader(stdin)
     s = sorted(reader, key=program_name)
@@ -55,9 +63,11 @@ def main():
 
     for program, line in groupby(s, program_name):
         times = map(time_lambda, line)
+
+        all_program_times += times
+
         if len(times) < 20 or (program not in valid_programs):
             continue
-        all_program_times += times
 
         rows = times_to_intervals(program, times)
         activity_rows += rows
