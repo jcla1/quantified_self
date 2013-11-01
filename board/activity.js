@@ -62,9 +62,6 @@ d3.csv("/data/activity_log.csv", function(data) {
     d.start_ts = +d.start_ts;
     d.end_ts = +d.end_ts;
 
-    d.start_ts += 7200;
-    d.end_ts += 7200;
-
     var start_dt = new Date(d.start_ts * 1000);
     var end_dt = new Date(d.end_ts * 1000);
 
@@ -203,7 +200,7 @@ d3.csv("/data/activity_log.csv", function(data) {
 
       a.enter().append("rect")
         .attr("class", function(d, i){ return "activity"; })
-        .attr("width", 2)
+        .attr("width", 1)
         .style("fill", "#2CA02C")
         .attr("x", function(d) { return d.x; })
       .transition()
