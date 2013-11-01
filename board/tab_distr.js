@@ -1,8 +1,6 @@
 d3.csv("/data/tab_distr.csv", function(err, raw) {
   var margin = {top: 20, right: 20, bottom: 40, left: 20},
-    //width = 360 - margin.left - margin.right,
-    //height = 170 - margin.top - margin.bottom;
-    width = 750 - margin.left - margin.right,
+    width = 360 - margin.left - margin.right,
     height = 170 - margin.top - margin.bottom;
 
   var values = raw.reduce(function(a, b) {
@@ -14,8 +12,6 @@ d3.csv("/data/tab_distr.csv", function(err, raw) {
   var data = d3.layout.histogram()
     .bins(raw.length)
     (values);
-
-  window.data = data;
 
   var x = d3.scale.linear()
     .domain([0, raw.length-1])
