@@ -41,10 +41,20 @@ def times_to_intervals(program, times):
     while i < len(times):
         end_index = get_duration_end(i, times)
         if end_index != i:
-            row = interval_to_row([times[i], times[end_index]], program)
-            rows.append(row)
-        else:
-            rows.append(interval_to_row([times[i], times[i]+60], program))
+            start = times[i]
+            end = times[end_index]
+
+            if (start % 86400) > (end % 86400):
+                row1 = interval_to_row([start, (end / 86400) * 86400], program)
+                row2 = interval_to_row([(end / 86400) * 86400, end], program)
+
+                rows.append(row1)
+                rows.append(row2)
+            else:
+                row = interval_to_row([start, end], program)
+                rows.append(row)
+        #else:
+        #    rows.append(interval_to_row([times[i], times[i]+60], program))
 
         i = end_index + 1
 
