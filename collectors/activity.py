@@ -61,7 +61,7 @@ def times_to_intervals(program, times):
     return rows
 
 def main():
-    valid_programs = ["Google Chrome", "Sublime Text 2", "iTerm", "Finder", "Xcode", "Activity Monitor"]
+    valid_programs = ["Google Chrome", "Sublime Text 2", "iTerm", "Finder", "Activity Monitor"]
     program_name = lambda x: x[3]
     time_lambda = lambda x: int(x[0]) + timezone_offsets[x[1]]
 
