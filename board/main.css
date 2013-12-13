@@ -165,3 +165,14 @@ svg .day {
   stroke: #000;
   shape-rendering: crispEdges;
 }
+
+.line {
+  stroke: #000;
+  stroke-width: 1px;
+  fill: none;
+}
+
+.area {
+  fill: #000;
+  opacity: 1;
+}

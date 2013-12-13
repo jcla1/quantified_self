@@ -6,4 +6,6 @@ echo "count,n" > data/tab_distr.csv; cat ~/data/misc/activity_log/2013* | sed -n
 
 echo "date" > data/search_distr.csv; cat ~/data/misc/activity_log/2013* | sed 'N;N;s/^\(.*\)\n.*\n\(.*\)$/\1,\2/' | cut -d, -f1,8 | grep www.google.com/search | cut -d, -f1 >> data/search_distr.csv;
 
+echo "timestart,occ" > data/computer_probability.csv; sed -n "1~3p" ~/data/misc/activity_log/2013* | python collectors/activity.py | python collectors/computer_probability.py >> data/computer_probability.csv
+
 #echo "date" > data/sites_distr.csv; cat ~/data/misc/activity_log/2013* | sed 'N;N;s/^\(.*\)\n.*\n\(.*\)$/\1,\2/' | cut -d, -f1,8 | tr "," " " | uniq -f1 | cut -d" " -f1 >> data/sites_distr.csv
