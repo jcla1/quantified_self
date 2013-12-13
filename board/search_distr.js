@@ -15,7 +15,7 @@ d3.csv("/data/search_distr.csv", function(err, raw) {
     .range([0, width]);
 
   var data = d3.layout.histogram()
-    .bins(x.ticks(20))
+    .bins(x.ticks(24))
     (values);
 
   var xAxis = d3.svg.axis()
