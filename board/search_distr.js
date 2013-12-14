@@ -4,18 +4,18 @@ d3.csv("/data/search_distr.csv", function(err, raw) {
     height = 170 - margin.top - margin.bottom;
 
   var formatTime = formatTime = d3.time.format("%H:%M"),
-    formatHours = function(d) { return formatTime(new Date(2013, 0, 1, d, 0)) };
+    formatHours = function(d) { return formatTime(new Date(2013, 0, 1, d%3600, 0)) };
 
   var values = raw.map(function(a) {
-    return (new Date(parseInt(a.date)*1000)).getHours();
+    return parseInt(a.date) % 86400;
   });
 
   var x = d3.scale.linear()
-    .domain([0, 23])
+    .domain([0, 86400])
     .range([0, width]);
 
   var data = d3.layout.histogram()
-    .bins(x.ticks(24))
+    .bins(x.ticks(60))
     (values);
 
   var xAxis = d3.svg.axis()
