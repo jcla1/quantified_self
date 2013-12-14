@@ -2,7 +2,7 @@ from sys import stdin
 import csv
 
 # How big shall the segments be to group the activity into?
-SECOND_GROUPS = 120
+SECOND_GROUPS = 30
 
 def seconds_adder(seconds, r):
     r = xrange(r[0], r[1])
