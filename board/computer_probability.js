@@ -94,6 +94,6 @@ d3.csv("/data/computer_probability.csv", function(err, data) {
 
       xAxis.tickValues([~~x.invert(d3.event.offsetX-20)]);
       svg.selectAll(".x.axis").call(xAxis)
-    })
+  })
 
 });
