@@ -1,4 +1,6 @@
 d3.csv("/data/computer_probability.csv", function(err, data) {
+  var BASE_TICKS = [0, 7200, 14400, 21600, 28800, 36000, 43200, 50400, 57600, 64800, 72000, 79200, 86400];
+
   var margin = {top: 20, right: 20, bottom: 40, left: 20},
     width = 750 - margin.left - margin.right,
     height = 170 - margin.top - margin.bottom;
@@ -12,7 +14,8 @@ d3.csv("/data/computer_probability.csv", function(err, data) {
 
   var xAxis = d3.svg.axis()
     .scale(x)
-    .ticks(7)
+    //.ticks(12)
+    .tickValues(BASE_TICKS)
     .orient("bottom")
     .tickFormat(formatHours);
 
@@ -65,5 +68,35 @@ d3.csv("/data/computer_probability.csv", function(err, data) {
     .attr("class", "x axis")
     .attr("transform", "translate(0," + height + ")")
     .call(xAxis);
+
+
+  function show_ruler(svg, xAxis) {
+    svg.selectAll(".ruler").style("display", "inherit");
+  }
+
+  function hide_ruler(svg, xAxis) {
+    svg.selectAll(".ruler").style("display", "none");
+    xAxis.tickValues(BASE_TICKS);
+    svg.selectAll(".x.axis").call(xAxis)
+  }
+
+  svg.append("line")
+    .attr({
+      "class": "ruler",
+      "y1": -20,
+      "y2": 110
+    });
+
+  svg.on("mouseenter", function() { show_ruler(svg, xAxis); });
+  svg.on("mouseleave", function() { hide_ruler(svg, xAxis); });
+  svg.on("mousemove", function() {
+      svg.selectAll(".ruler").attr({
+        "x1": d3.event.offsetX-21,
+        "x2": d3.event.offsetX-20
+      });
+
+      xAxis.tickValues([~~x.invert(d3.event.offsetX-20)]);
+      svg.selectAll(".x.axis").call(xAxis)
+    })
 
 });
