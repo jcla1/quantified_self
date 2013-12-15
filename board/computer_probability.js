@@ -67,6 +67,13 @@ d3.csv("/data/computer_probability.csv", function(err, data) {
     .call(xAxis);
 
 
+  // this rect is so the group expands to its full size,
+  // so the mousemove event will fire
+  svg.append("rect")
+    .attr("width", width)
+    .attr("height", height)
+    .style("fill", "transparent")
+
   function show_ruler(svg, xAxis) {
     svg.selectAll(".ruler").style("display", "inherit");
   }
@@ -88,11 +95,11 @@ d3.csv("/data/computer_probability.csv", function(err, data) {
   svg.on("mouseleave", function() { hide_ruler(svg, xAxis); });
   svg.on("mousemove", function() {
       svg.selectAll(".ruler").attr({
-        "x1": d3.event.offsetX-21,
-        "x2": d3.event.offsetX-20
+        "x1": d3.mouse(this)[0]-1,
+        "x2": d3.mouse(this)[0]-1
       });
 
-      xAxis.tickValues([~~x.invert(d3.event.offsetX-20)]);
+      xAxis.tickValues([~~x.invert(d3.mouse(this)[0])]);
       svg.selectAll(".x.axis").call(xAxis)
   })
 
