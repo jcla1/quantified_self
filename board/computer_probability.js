@@ -46,7 +46,7 @@ d3.csv("/data/computer_probability.csv", function(err, data) {
     .y(function(d) { return y(parseInt(d.occ)); });
 
   var area = d3.svg.area()
-    .interpolate("monotone")
+    .interpolate("basis")
     .y0(height)
     .x(function(d) { return x(parseInt(d.timestart)); })
     .y1(function(d) { return y(parseInt(d.occ)); });

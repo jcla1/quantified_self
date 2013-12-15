@@ -173,8 +173,8 @@ svg .day {
 }
 
 .area {
-  fill: #000;
-  opacity: 0;
+  fill: #DDD;
+  opacity: 0.1;
 }
 
 .ruler {
