@@ -6,7 +6,7 @@ d3.csv("/data/computer_probability.csv", function(err, data) {
     height = 170 - margin.top - margin.bottom;
 
   var formatTime = formatTime = d3.time.format("%H:%M"),
-    formatHours = function(d) { return formatTime(new Date(2013, 0, 1, ~~(d/3600), d%60)) };
+    formatHours = function(d) { return formatTime(new Date(d*1000 - (new Date(0)).getHours() * 3600000)) };
 
   var x = d3.scale.linear()
     .domain([0, 86400])
@@ -22,9 +22,6 @@ d3.csv("/data/computer_probability.csv", function(err, data) {
   var y = d3.scale.linear()
     .domain([0, d3.max(data, function(d) { return parseInt(d.occ); })])
     .range([height, 0]);
-
-  window.data = data;
-  window.y = y;
 
   var svg = d3.select("#computer_probability").append("svg")
     .attr("width", width + margin.left + margin.right)
