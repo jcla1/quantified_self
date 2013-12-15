@@ -4,7 +4,7 @@ d3.csv("/data/search_distr.csv", function(err, raw) {
     height = 170 - margin.top - margin.bottom;
 
   var formatTime = formatTime = d3.time.format("%H:%M"),
-    formatHours = function(d) { return formatTime(new Date(2013, 0, 1, d%3600, 0)) };
+    formatHours = function(d) { return formatTime(new Date(d*1000 - (new Date(0)).getHours() * 3600000)) };
 
   var values = raw.map(function(a) {
     return parseInt(a.date) % 86400;
@@ -20,7 +20,7 @@ d3.csv("/data/search_distr.csv", function(err, raw) {
 
   var xAxis = d3.svg.axis()
     .scale(x)
-    .ticks(4)
+    .tickValues([0, 21600, 43200, 64800, 86400])
     .orient("bottom")
     .tickFormat(formatHours);
 
