@@ -11,6 +11,6 @@ echo "count,n" > data/tab_distr.csv; cat $LOGS | sed -n "1~3p" | cut -d, -f7 | s
 
 echo "date" > data/search_distr.csv; cat $LOGS | sed 'N;N;s/^\(.*\)\n.*\n\(.*\)$/\1,\2/' | cut -d, -f1,8 | grep www.google.com/search | cut -d, -f1 >> data/search_distr.csv;
 
-echo "title,value" > data/stats.csv; sed -n "3~3p" $LOGS | python collectors/url_stats.py >> data/stats.csv;
+echo "title,value,subtext,special,color" > data/stats.csv; sed -n "3~3p" $LOGS | python collectors/url_stats.py >> data/stats.csv;
 
 # echo "date" > data/sites_distr.csv; cat $LOGS | sed 'N;N;s/^\(.*\)\n.*\n\(.*\)$/\1,\2/' | cut -d, -f1,8 | tr "," " " | uniq -f1 | cut -d" " -f1 >> data/sites_distr.csv

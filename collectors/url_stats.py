@@ -1,5 +1,6 @@
 from urlparse import urlparse
 from itertools import groupby
+from time import time
 import sys
 import re
 
@@ -10,10 +11,10 @@ def num_domains(urls):
     return len(set(map(lambda x: urlparse(x).netloc, urls)))
 
 def num_times_hn(urls):
-    return len(filter(
+    return (len(filter(
         lambda x: urlparse(x).netloc == "news.ycombinator.com",
         [x[0] for x in groupby(urls)]
-        ))
+        )), "#F60")
 
 def num_wikipedia(urls):
     domains = [urlparse(x).netloc for x in set(urls)]
@@ -43,11 +44,27 @@ names = {
     # "num_youtube_vids": "# Youtube videos viewed"
 }
 
+START_TIME = 1379109600 # in seconds
+
 
 def main():
     urls = list(sys.stdin)
     for func, name in names.iteritems():
-        print "%s,%d" % (name, globals()[func](urls))
+        ret = globals()[func](urls)
+
+        if type(ret) == tuple:
+            value = ret[0]
+            special = 1
+            color = ret[1]
+        else:
+            value = ret
+            special = 0
+            color = ""
+
+        subtext = "+ <span>%d</span> / day" % (value / int(((int(time()) - START_TIME) / 86400)))
+        vals = (name, value, subtext, special, color)
+
+        print "%s,%d,%s,%s,%s" % vals
 
 if __name__ == "__main__":
     main()
