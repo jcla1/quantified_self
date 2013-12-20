@@ -5,14 +5,12 @@ echo "start_ts,end_ts,duration,program" > data/activity_log.csv;
 echo "timestart,occ" > data/computer_probability.csv;
 sed -n "1~3p" $LOGS | python collectors/activity.py | tee -a data/activity_log.csv | python collectors/computer_probability.py >> data/computer_probability.csv
 
-
-# echo "start_ts,end_ts,duration,program" > data/activity_log.csv; sed -n "1~3p" $LOGS | python collectors/activity.py >> data/activity_log.csv
-# echo "timestart,occ" > data/computer_probability.csv; sed -n "1~3p" $LOGS | python collectors/activity.py | python collectors/computer_probability.py >> data/computer_probability.csv
-
 echo "date,mib" > data/net_usage_daily.csv; tail -qn 1 $NET_LOGS | cut -d, -f1,3 >> data/net_usage_daily.csv
 
 echo "count,n" > data/tab_distr.csv; cat $LOGS | sed -n "1~3p" | cut -d, -f7 | sed /^$/d | sort | uniq -c | sort | sed "s/^ *//g" | tr " " "," >> data/tab_distr.csv
 
 echo "date" > data/search_distr.csv; cat $LOGS | sed 'N;N;s/^\(.*\)\n.*\n\(.*\)$/\1,\2/' | cut -d, -f1,8 | grep www.google.com/search | cut -d, -f1 >> data/search_distr.csv;
+
+echo "title,value" > data/stats.csv; sed -n "3~3p" $LOGS | python collectors/url_stats.py >> data/stats.csv;
 
 # echo "date" > data/sites_distr.csv; cat $LOGS | sed 'N;N;s/^\(.*\)\n.*\n\(.*\)$/\1,\2/' | cut -d, -f1,8 | tr "," " " | uniq -f1 | cut -d" " -f1 >> data/sites_distr.csv

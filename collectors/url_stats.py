@@ -20,7 +20,7 @@ def num_wikipedia(urls):
     de = len(filter(lambda x: re.match("de\.wikipedia\.org", x), domains))
     en = len(filter(lambda x: re.match("en\.wikipedia\.org", x), domains))
     others = len(filter(lambda x: re.search("\.wikipedia\.org", x), domains)) - (de+en)
-    return (de, en, others)
+    return de + en + others
 
 def num_github_repos(urls):
     return len(filter(
@@ -34,20 +34,20 @@ def num_youtube_vids(urls):
         lambda x: re.search("http\:\/\/www.youtube.com\/watch\?v\=", x),
         set(urls)))
 
+names = {
+    "num_sites": "# sites visited",
+    "num_domains": "# domains visited",
+    "num_times_hn": "# times on hn",
+    "num_wikipedia": "# wikipedia articles visited",
+    "num_github_repos": "Github projects viewed",
+    # "num_youtube_vids": "# Youtube videos viewed"
+}
+
+
 def main():
     urls = list(sys.stdin)
-    print "%s,%d" % ("num_sites", num_sites(urls))
-    print "%s,%d" % ("num_domains", num_domains(urls))
-    print "%s,%d" % ("num_times_hn", num_times_hn(urls))
-
-    de, en, other = num_wikipedia(urls)
-    #print "%s,%d" % ("num_wikipedia_de", de)
-    #print "%s,%d" % ("num_wikipedia_en", en)
-    #print "%s,%d" % ("num_wikipedia_other", other)
-    print "%s,%d" % ("num_wikipedia", de+en+other)
-
-    print "%s,%d" % ("num_github_repos", num_github_repos(urls))
-    print "%s,%d" % ("num_youtube_vids", num_youtube_vids(urls))
+    for func, name in names.iteritems():
+        print "%s,%d" % (name, globals()[func](urls))
 
 if __name__ == "__main__":
     main()
