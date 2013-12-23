@@ -9,7 +9,6 @@ var day = function(d) { return (d.getDay() + 6) % 7; },
     format = d3.time.format("%Y/%m/%d");
 
 var color = d3.scale.quantile()
-    .domain([50, 600])
     .range(d3.range(8).map(function(d) { return "q" + d + "-11"; }));
 
 var svg = d3.select("#netusage").selectAll("svg")
@@ -73,6 +72,8 @@ d3.csv("/data/net_usage_daily.csv", function(error, csv) {
     })
     .rollup(function(d) { return (parseFloat(d[0].mib)); })
     .map(csv);
+
+  color.domain(d3.extent(csv, function(d) { var a = parseFloat(d.mib); return 0.0001*a*a; }));
 
   rect.filter(function(d) { return d in data; })
       .attr("class", function(d) { return "day " + color(data[d]); })
