@@ -44,7 +44,7 @@ names = {
     # "num_youtube_vids": "# Youtube videos viewed"
 }
 
-START_TIME = 1379109600 # in seconds
+START_TIME = 1388530800 # in seconds
 
 
 def main():
