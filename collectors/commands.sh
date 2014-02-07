@@ -1,5 +1,5 @@
-LOGS=~/data/misc/activity_log/2013*.log
-NET_LOGS=~/data/misc/activity_log/net_2013*
+LOGS=~/data/misc/activity_log/2014*
+NET_LOGS=~/data/misc/activity_log/net_2014*
 NUM_DAYS=110
 
 echo "start_ts,end_ts,duration,program" > data/activity_log.csv;
