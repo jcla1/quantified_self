@@ -73,7 +73,7 @@ d3.csv("/data/net_usage_daily.csv", function(error, csv) {
     .rollup(function(d) { return (parseFloat(d[0].mib)); })
     .map(csv);
 
-  color.domain(d3.extent(csv, function(d) { var a = parseFloat(d.mib); return 0.0001*a*a; }));
+  color.domain(d3.extent(csv, function(d) { var a = parseFloat(d.mib); return a; }));
 
   rect.filter(function(d) { return d in data; })
       .attr("class", function(d) { return "day " + color(data[d]); })
