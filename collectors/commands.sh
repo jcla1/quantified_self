@@ -1,6 +1,6 @@
 LOGS=~/data/misc/activity_log/2014*
 NET_LOGS=~/data/misc/activity_log/net_2014*
-NUM_DAYS=37
+NUM_DAYS=94
 
 echo "start_ts,end_ts,duration,program" > data/activity_log.csv;
 echo "timestart,occ" > data/computer_probability.csv;

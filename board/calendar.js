@@ -8,7 +8,7 @@ var day = function(d) { return (d.getDay() + 6) % 7; },
     month = d3.time.format("%b"),
     format = d3.time.format("%Y/%m/%d");
 
-var color = d3.scale.quantile()
+var color = d3.scale.quantize()
     .range(d3.range(8).map(function(d) { return "q" + d + "-11"; }));
 
 var svg = d3.select("#netusage").selectAll("svg")
