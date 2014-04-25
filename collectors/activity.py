@@ -63,7 +63,8 @@ def times_to_intervals(program, times):
 def main():
     valid_programs = ["Google Chrome", "Sublime Text 2", "iTerm", "Finder", "Activity Monitor"]
     program_name = lambda x: x[3]
-    time_lambda = lambda x: int(x[0]) + timezone_offsets[x[1]]
+    time_lambda = lambda x: -1 if int(x[2]) > 300 else int(x[0]) + timezone_offsets[x[1]]
+    invalid_times = lambda x: x > 0
 
     reader = csv.reader(stdin)
     s = sorted(reader, key=program_name)
@@ -72,7 +73,7 @@ def main():
     activity_rows = []
 
     for program, line in groupby(s, program_name):
-        times = map(time_lambda, line)
+        times = filter(invalid_times, map(time_lambda, line))
 
         all_program_times += times
 
