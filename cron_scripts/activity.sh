@@ -4,7 +4,7 @@
 
 CHROME_STATUS="data/misc/cron/chrome_status/chrome_status.applescript"
 RUNNING_PROGRAMS="data/misc/cron/running_programs/running_programs.applescript"
-FRONT_APP="data/misc/cron/frontApp/frontApp.applescript"
+FRONT_APP="data/misc/cron/front_app/front_app.applescript"
 
 LOG_FILE="data/misc/activity_log/`date +%Y%m%d`.log"
 
