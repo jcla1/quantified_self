@@ -18,7 +18,6 @@ def get_duration_end(start_index, times, duration_step=360):
         else:
             start_index += 1
 
-
 def interval_to_row(t, program):
     return [t[0], t[1], t[1]-t[0], program]
 
