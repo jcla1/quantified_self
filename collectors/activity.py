@@ -10,16 +10,6 @@ timezone_offsets = {
     "CET": 3600
 }
 
-
-# This recursive version worked well, but when there were too many
-# events the call stack size was exceeded, so it failed
-def get_duration_end_recursive(start_index, times, duration_step=360):
-    if len(times) == start_index+1: return start_index
-    if (times[start_index+1] - times[start_index]) > 1000:
-        return start_index
-    else:
-        return get_duration_end(start_index+1, times)
-
 def get_duration_end(start_index, times, duration_step=360):
     while True:
         if len(times) == start_index+1: return start_index
