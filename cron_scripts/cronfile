@@ -1,0 +1,4 @@
+0-55/5 * * * * data/misc/cron/net_usage.sh
+* * * * * data/misc/cron/activity.sh
+0-55/5 * * * * if [ -x /usr/local/Cellar/vnstat/1.11/bin/vnstat ] && [ `ls /usr/local/var/db/vnstat/ | wc -l` -ge 1 ]; then /usr/local/Cellar/vnstat/1.11/bin/vnstat -u; fi
+
