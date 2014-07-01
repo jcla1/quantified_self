@@ -1,32 +1,40 @@
-import System.Environment
-import Control.Monad
-import Data.Function
+import Data.Function (on)
+import Data.List (sort, sortBy, groupBy, nub)
 import Data.List.Utils (replace)
-import Data.List
-import Data.Ord
-import Text.CSV
+import Data.Ord (comparing)
 
-validPrograms = ["Google Chrome", "Sublime Text 2", "iTerm", "Finder", "Activity Monitor"]
+import Control.Monad (liftM)
+import System.Environment (getArgs)
+
+import qualified Text.CSV as CSV
+
+validPrograms   = ["Google Chrome", "Sublime Text 2", "iTerm", "Finder", "Activity Monitor"]
 maxIntervalDiff = 360
+minUsage        = 720
 
 main = do
-    (path:_) <- getArgs
-    Right csv <- parseCSVFromFile path
-    let mainRecords = (every 3 $ init csv)
-        programTimeRecords = toProgramTime $ filterValidTimes mainRecords
-        programGroups = cleanGroups . groupBy ((==) `on` snd) $ sortBy (comparing snd) programTimeRecords
-        validProgramTimes = filterValidPrograms programGroups
-        allProgramsTimes = concatMap snd programGroups
-    --putStrLn . postpareCSV . intervalsToCSV "All Programs" $ timesToInterval allProgramsTimes
-    putStrLn . postpareCSV . concatMap (uncurry intervalsToCSV) $ mapTimesToInterval validProgramTimes
+    Right csv <- ((liftM head) getArgs) >>= CSV.parseCSVFromFile
+    let activityRecords = (every 3 $ init csv)
+    putStrLn $ processActivityRecords activityRecords
 
-postpareCSV :: CSV -> String
-postpareCSV = removeQuotes . printCSV
+processActivityRecords :: CSV.CSV -> String
+processActivityRecords rs = ((++) `on` ((flip (++)) "\n") . postpareCSV) otherPrograms allPrograms
+    where
+        allPrograms = intervalsToCSV "All Programs" allProgramIntervals
+        allProgramIntervals = timesToInterval . sort . nub $ concatMap snd programTimes
 
-intervalsToCSV :: String -> [(Int, Int)] -> CSV
+        otherPrograms = concatMap (uncurry intervalsToCSV) . filterPrograms $ mapTimesToInterval programTimes
+        programTimes = cleanGroups . groupBy ((==) `on` fst) . sortBy (comparing fst) $ toProgramTime rs
+
+        filterPrograms = filterMinUsage . filterValidPrograms
+
+postpareCSV :: CSV.CSV -> String
+postpareCSV = removeQuotes . CSV.printCSV
+
+intervalsToCSV :: String -> [(Int, Int)] -> CSV.CSV
 intervalsToCSV name = map (uncurry (intervalToCSV name))
 
-intervalToCSV :: String -> Int -> Int -> Record
+intervalToCSV :: String -> Int -> Int -> CSV.Record
 intervalToCSV name s e = [show s, show e, show (e - s), name]
 
 mapTimesToInterval :: [(String, [Int])] -> [(String, [(Int, Int)])]
@@ -41,19 +49,19 @@ timesToInterval (x:xs) = foldl concatIntervals [(x, x)] xs
             | start /= end                          = [(t, t), (start, end)]
             | otherwise                             = [(t, t)]
 
-filterValidPrograms :: [(String, [Int])] -> [(String, [Int])]
+filterValidPrograms :: [(String, a)] -> [(String, a)]
 filterValidPrograms = filter (\ x -> fst x `elem` validPrograms)
 
-filterValidTimes :: CSV -> CSV
-filterValidTimes = filter (\ r -> (read (r !! 2) :: Int) <= 300)
+filterMinUsage :: [(a, [(Int, Int)])] -> [(a, [(Int, Int)])]
+filterMinUsage = filter (\ (_, is) -> (intervalsToDuration is) >= minUsage)
 
-filterProgramGroups :: [(String, [Int])] -> [(String, [Int])]
-filterProgramGroups = filter (\ x -> (length $ snd x) >= 20)
+intervalsToDuration :: [(Int, Int)] -> Int
+intervalsToDuration = foldl (\ acc (a, b) -> acc + b - a) 0
 
-toProgramTime :: CSV -> [(Int, String)]
-toProgramTime = map (\ r -> (adjustTime r, r !! 3))
+toProgramTime :: CSV.CSV -> [(String, Int)]
+toProgramTime = map (\ r -> (r !! 3, adjustTime r))
 
-adjustTime :: [String] -> Int
+adjustTime :: CSV.Record -> Int
 adjustTime (t:tz:_) = (read t :: Int) + case tz of
             "CEST" -> 7200
             "CET" -> 3600
@@ -61,8 +69,8 @@ adjustTime (t:tz:_) = (read t :: Int) + case tz of
 removeQuotes :: String -> String
 removeQuotes = replace "\"" ""
 
-cleanGroups :: [[(a, b)]] -> [(b, [a])]
-cleanGroups = map (\ x -> (snd $ head x, map fst x))
+cleanGroups :: [[(a, b)]] -> [(a, [b])]
+cleanGroups = map (\ x -> (fst $ head x, map snd x))
 
 every :: Int -> [a] -> [a]
 every n [] = []
