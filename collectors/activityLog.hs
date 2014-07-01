@@ -18,13 +18,27 @@ main = do
     putStrLn $ processActivityRecords activityRecords
 
 processActivityRecords :: CSV.CSV -> String
-processActivityRecords rs = ((++) `on` flip (++) "\n" . postpareCSV) otherPrograms allPrograms
+processActivityRecords rs = concatRecords otherPrograms allPrograms
     where
-        allPrograms = intervalsToCSV "All Programs" allProgramIntervals
-        allProgramIntervals = timesToInterval . sort . nub $ concatMap snd programTimes
+        concatRecords = (++) `on` flip (++) "\n" . postpareCSV
 
-        otherPrograms = concatMap (uncurry intervalsToCSV) . filterPrograms $ mapTimesToInterval programTimes
-        programTimes = cleanGroups . groupBy ((==) `on` fst) . sortBy (comparing fst) $ toProgramTime rs
+        allPrograms = intervalsToCSV "All Programs" allProgramIntervals
+        allProgramIntervals =
+            timesToInterval .
+            sort .
+            nub $
+            concatMap snd programTimes
+
+        otherPrograms =
+            concatMap (uncurry intervalsToCSV) .
+            filterPrograms $
+            mapTimesToInterval programTimes
+
+        programTimes =
+            cleanGroups .
+            groupBy ((==) `on` fst) .
+            sortBy (comparing fst) $
+            toProgramTime rs
 
         filterPrograms = filterMinUsage . filterValidPrograms
 
