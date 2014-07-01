@@ -33,17 +33,13 @@ mapTimesToInterval :: [(String, [Int])] -> [(String, [(Int, Int)])]
 mapTimesToInterval = map (\ x -> (fst x, timesToInterval $ snd x))
 
 timesToInterval :: [Int] -> [(Int, Int)]
-timesToInterval (x:xs) = foldl
-    (\ ((start, end):intervals) timestamp ->
-        if timestamp > end && timestamp - end <= 1000 then
-            (start, timestamp) : intervals
-        else
-            -- TODO: see if this can be refactored
-            if start /= end then
-                (timestamp, timestamp) : (start, end) : intervals
-            else
-                (timestamp, timestamp) : intervals
-    ) [(x, x)] xs
+timesToInterval (x:xs) = foldl concatIntervals [(x, x)] xs
+    where
+        concatIntervals (i:is) t = makeInterval i t ++ is
+        makeInterval (start, end) t
+            | t > end && t - end <= 1000 = [(start, t)]
+            | start /= end               = [(t, t), (start, end)]
+            | otherwise                  = [(t, t)]
 
 validPrograms = ["Google Chrome", "Sublime Text 2", "iTerm", "Finder", "Activity Monitor"]
 
