@@ -6,6 +6,9 @@ import Data.List
 import Data.Ord
 import Text.CSV
 
+validPrograms = ["Google Chrome", "Sublime Text 2", "iTerm", "Finder", "Activity Monitor"]
+maxIntervalDiff = 360
+
 main = do
     (path:_) <- getArgs
     Right csv <- parseCSVFromFile path
@@ -19,9 +22,6 @@ main = do
 
 postpareCSV :: CSV -> String
 postpareCSV = removeQuotes . printCSV
-
-removeQuotes :: String -> String
-removeQuotes = replace "\"" ""
 
 intervalsToCSV :: String -> [(Int, Int)] -> CSV
 intervalsToCSV name = map (uncurry (intervalToCSV name))
@@ -37,16 +37,17 @@ timesToInterval (x:xs) = foldl concatIntervals [(x, x)] xs
     where
         concatIntervals (i:is) t = makeInterval i t ++ is
         makeInterval (start, end) t
-            | t > end && t - end <= 1000 = [(start, t)]
-            | start /= end               = [(t, t), (start, end)]
-            | otherwise                  = [(t, t)]
+            | t > end && t - end <= maxIntervalDiff = [(start, t)]
+            | start /= end                          = [(t, t), (start, end)]
+            | otherwise                             = [(t, t)]
 
-validPrograms = ["Google Chrome", "Sublime Text 2", "iTerm", "Finder", "Activity Monitor"]
-
+filterValidPrograms :: [(String, [Int])] -> [(String, [Int])]
 filterValidPrograms = filter (\ x -> fst x `elem` validPrograms)
 
+filterValidTimes :: CSV -> CSV
 filterValidTimes = filter (\ r -> (read (r !! 2) :: Int) <= 300)
 
+filterProgramGroups :: [(String, [Int])] -> [(String, [Int])]
 filterProgramGroups = filter (\ x -> (length $ snd x) >= 20)
 
 toProgramTime :: CSV -> [(Int, String)]
@@ -56,6 +57,9 @@ adjustTime :: [String] -> Int
 adjustTime (t:tz:_) = (read t :: Int) + case tz of
             "CEST" -> 7200
             "CET" -> 3600
+
+removeQuotes :: String -> String
+removeQuotes = replace "\"" ""
 
 cleanGroups :: [[(a, b)]] -> [(b, [a])]
 cleanGroups = map (\ x -> (snd $ head x, map fst x))
