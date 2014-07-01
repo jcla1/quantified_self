@@ -62,8 +62,7 @@ adjustTime (t:tz:_) = (read t :: Int) + case tz of
             "CET" -> 3600
 
 cleanGroups :: [[(a, b)]] -> [(b, [a])]
-cleanGroups [] = []
-cleanGroups (x:xs) = (snd $ head x, map fst x) : cleanGroups xs
+cleanGroups = map (\ x -> (snd $ head x, map fst x))
 
 every :: Int -> [a] -> [a]
 every n [] = []
