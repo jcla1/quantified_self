@@ -13,12 +13,12 @@ maxIntervalDiff = 360
 minUsage        = 720
 
 main = do
-    Right csv <- ((liftM head) getArgs) >>= CSV.parseCSVFromFile
-    let activityRecords = (every 3 $ init csv)
+    Right csv <- CSV.parseCSVFromFile =<< liftM head getArgs
+    let activityRecords = every 3 $ init csv
     putStrLn $ processActivityRecords activityRecords
 
 processActivityRecords :: CSV.CSV -> String
-processActivityRecords rs = ((++) `on` ((flip (++)) "\n") . postpareCSV) otherPrograms allPrograms
+processActivityRecords rs = ((++) `on` flip (++) "\n" . postpareCSV) otherPrograms allPrograms
     where
         allPrograms = intervalsToCSV "All Programs" allProgramIntervals
         allProgramIntervals = timesToInterval . sort . nub $ concatMap snd programTimes
@@ -53,7 +53,7 @@ filterValidPrograms :: [(String, a)] -> [(String, a)]
 filterValidPrograms = filter (\ x -> fst x `elem` validPrograms)
 
 filterMinUsage :: [(a, [(Int, Int)])] -> [(a, [(Int, Int)])]
-filterMinUsage = filter (\ (_, is) -> (intervalsToDuration is) >= minUsage)
+filterMinUsage = filter (\ (_, is) -> intervalsToDuration is >= minUsage)
 
 intervalsToDuration :: [(Int, Int)] -> Int
 intervalsToDuration = foldl (\ acc (a, b) -> acc + b - a) 0
@@ -74,4 +74,4 @@ cleanGroups = map (\ x -> (fst $ head x, map snd x))
 
 every :: Int -> [a] -> [a]
 every n [] = []
-every n (x:xs) = x : (every n $ drop (n-1) xs)
+every n (x:xs) = x : every n (drop (n - 1) xs)
