@@ -13,7 +13,7 @@ timezone_offsets = {
 def get_duration_end(start_index, times, duration_step=360):
     while True:
         if len(times) == start_index+1: return start_index
-        if (times[start_index+1] - times[start_index]) > 1000:
+        if (times[start_index+1] - times[start_index]) > duration_step:
             return start_index
         else:
             start_index += 1
