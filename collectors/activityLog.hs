@@ -2,20 +2,30 @@ import Data.Function (on)
 import Data.List (sort, sortBy, groupBy, nub)
 import Data.List.Utils (replace)
 import Data.Ord (comparing)
+import Data.Either (rights)
 
 import Control.Monad (liftM)
 import System.Environment (getArgs)
 
+import Text.Parsec.Error (ParseError)
 import qualified Text.CSV as CSV
 
 validPrograms   = ["Google Chrome", "Sublime Text 2", "iTerm", "Finder", "Activity Monitor"]
+-- Maximum time difference between two usages of a program,
+-- so that these usages would be counted in the same interval, in seconds.
 maxIntervalDiff = 360
+-- Minimum duration of usage of a program to be accounted for in the line-up
 minUsage        = 720
 
 main = do
-    Right csv <- CSV.parseCSVFromFile =<< liftM head getArgs
-    let activityRecords = every 3 $ init csv
+    records <- liftM (concatMap init . rights) getCSVs
+    let activityRecords    = every 3 records
+        --openProgramRecords = every 3 $ drop 1 records
+        --urlRecords         = concat . every 3 $ drop 2 records
     putStrLn $ processActivityRecords activityRecords
+
+getCSVs :: IO [Either ParseError CSV.CSV]
+getCSVs = mapM CSV.parseCSVFromFile =<< getArgs
 
 processActivityRecords :: CSV.CSV -> String
 processActivityRecords rs = concatRecords otherPrograms allPrograms
