@@ -18,10 +18,7 @@ maxIntervalDiff = 360
 minUsage        = 720
 
 main = do
-    records <- liftM (concatMap init . rights) getCSVs
-    let activityRecords    = every 3 records
-        --openProgramRecords = every 3 $ drop 1 records
-        --urlRecords         = concat . every 3 $ drop 2 records
+    activityRecords <- liftM (concatMap init . rights) getCSVs
     putStrLn $ processActivityRecords activityRecords
 
 getCSVs :: IO [Either ParseError CSV.CSV]
