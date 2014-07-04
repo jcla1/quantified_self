@@ -1,3 +1,5 @@
 # Data files
 *.csv
 *.json
+*.log
+.drake/
