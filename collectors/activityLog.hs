@@ -92,7 +92,3 @@ removeQuotes = replace "\"" ""
 
 cleanGroups :: [[(a, b)]] -> [(a, [b])]
 cleanGroups = map (\ x -> (fst $ head x, map snd x))
-
-every :: Int -> [a] -> [a]
-every n [] = []
-every n (x:xs) = x : every n (drop (n - 1) xs)
