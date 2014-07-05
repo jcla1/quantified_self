@@ -1,25 +1,29 @@
 DATE:=$(date +%Y)
-LOG_BASE="~/data/misc/activity_log/"
-LOGS:="$[LOG_BASE]$[DATE]*"
-NET_LOGS:="$[LOG_BASE]net_[$DATE]*"
+LOG_BASE:="~/data/misc/activity_log/"
+
+ACTIVITY_LOGS="$[LOG_BASE]activity_[$DATE]*"
+PROGRAMS_LOGS="$[LOG_BASE]programs_[$DATE]*"
+URLS_LOGS="$[LOG_BASE]urls_[$DATE]*"
+NET_LOGS="$[LOG_BASE]net_[$DATE]*"
+
 
 NUM_DAYS=$(perl -e 'use POSIX qw(strftime); $str = strftime "%j", localtime; print $str;')
 
 data/activity.csv <-
-    /usr/local/bin/sed -n "1~3p" $[LOGS] | python collectors/activity.py > $OUTPUT
+    cat $ACTIVITY_LOGS | python collectors/activity.py > $OUTPUT
 
 data/computer_probability.csv <- data/activity.csv
     cat $INPUT | python collectors/computer_probability.py > $OUTPUT
 
 data/net_usage_daily.csv <-
-    tail -qn 1 $[NET_LOGS] | cut -d, -f1,3 > $OUTPUT
+    tail -qn 1 $NET_LOGS | cut -d, -f1,3 > $OUTPUT
 
 data/tab_distr.csv <-
-    /usr/local/bin/sed -n "1~3p" $[LOGS] | cut -d, -f7 | /usr/local/bin/sed /^$/d | sort | uniq -c | sort | /usr/local/bin/sed "s/^ *//g" | tr " " "," > $OUTPUT
+    cat $ACTIVITY_LOGS | cut -d, -f7 | /usr/local/bin/sed /^$/d | sort | uniq -c | sort | /usr/local/bin/sed "s/^ *//g" | tr " " "," > $OUTPUT
 
 data/search_distr.csv <-
-    /usr/local/bin/sed 'N;N;s/^\(.*\)\n.*\n\(.*\)$/\1,\2/' $[LOGS] | cut -d, -f1,8 | grep www.google.com/search | cut -d, -f1 > $OUTPUT
+    cat $URLS_LOGS | cut -d, -f1,3 | grep www.google.com/search | cut -d, -f1 > $OUTPUT
 
 data/stats.csv <- data/net_usage_daily.csv
-    /usr/local/bin/sed -n "3~3p" $[LOGS] | python collectors/url_stats.py > $OUTPUT
+    cat $URLS_LOG | python collectors/url_stats.py > $OUTPUT
     tail -n +2 $INPUT | awk -F"," -v "NUM_DAYS=$[NUM_DAYS]" -v OFS="," '{ sum+=$2 } END {u=sum/1024; printf("network usage,%dGiB,+ <span>%dMiB</span> / day,,\n", u, (u*1024)/NUM_DAYS)}' >> $OUTPUT

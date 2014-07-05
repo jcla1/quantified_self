@@ -17,7 +17,7 @@ def convert_file(filename):
         urls_rows = []
 
         for g in groups:
-            timestamp = [g[0][:1]]
+            timestamp = g[0][:2]
 
             activity_rows.append(g[0])
             programs_rows.append(timestamp + g[1])
