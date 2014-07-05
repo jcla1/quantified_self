@@ -6,7 +6,12 @@ CHROME_STATUS="data/misc/cron/chrome_status/chrome_status.applescript"
 RUNNING_PROGRAMS="data/misc/cron/running_programs/running_programs.applescript"
 FRONT_APP="data/misc/cron/front_app/front_app.applescript"
 
-LOG_FILE="data/misc/activity_log/`date +%Y%m%d`.log"
+LOG_BASE="data/misc/activity_log/"
+LOG_END="`date +%Y%m%d`.log"
+
+ACTIVITY_LOG=$LOG_BASE"activity_"$LOG_END
+PROGRAMS_LOG=$LOG_BASE"programs_"$LOG_END
+URLS_LOG=$LOG_BASE"urls_"$LOG_END
 
 function log_activity()
 {
@@ -21,7 +26,9 @@ function log_activity()
 
     local PROGRAMS=$(/usr/bin/osascript $RUNNING_PROGRAMS)
 
-    echo "$UTC,$IDLE,$ACTIVE_PROGRAM,$CHROME_STATS,$BATTERY_CHARGE\n$PROGRAMS\n$ACTIVE_URL" >> $LOG_FILE
+    echo "$UTC,$IDLE,$ACTIVE_PROGRAM,$CHROME_STATS,$BATTERY_CHARGE" >> $ACTIVITY_LOG
+    echo "$UTC,$PROGRAMS" >> $PROGRAMS_LOG
+    echo "$UTC,$ACTIVE_URL" >> $URLS_LOG
 
     #echo "`vnstat --dumpdb | grep "^d;0" | tr ";" "," | cut -d, -f 3-`" >> $LOG_FILE
 }
