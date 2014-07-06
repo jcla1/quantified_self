@@ -1,11 +1,13 @@
-d3.csv("/data/tab_distr.csv", function(err, raw) {
+d3.text("/data/tab_distr.csv", "text/csv", function(err, txt) {
+  var raw = d3.csv.parseRows(txt);
+
   var margin = {top: 20, right: 20, bottom: 40, left: 20},
     width = 360 - margin.left - margin.right,
     height = 170 - margin.top - margin.bottom;
 
   var values = raw.reduce(function(a, b) {
-    return a.concat(d3.range(b.count).map(function() {
-        return b.n;
+    return a.concat(d3.range(b[0]).map(function() {
+        return b[1];
     }))
   }, []);
 
