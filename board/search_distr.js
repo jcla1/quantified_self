@@ -1,4 +1,6 @@
-d3.csv("/data/search_distr.csv", function(err, raw) {
+d3.text("/data/search_distr.csv", "text/csv", function(err, txt) {
+  var raw = d3.csv.parseRows(txt);
+
   var margin = {top: 20, right: 20, bottom: 40, left: 20},
     width = 360 - margin.left - margin.right,
     height = 170 - margin.top - margin.bottom;
@@ -7,7 +9,7 @@ d3.csv("/data/search_distr.csv", function(err, raw) {
     formatHours = function(d) { return formatTime(new Date(d*1000 - (new Date(0)).getHours() * 3600000)) };
 
   var values = raw.map(function(a) {
-    return parseInt(a.date) % 86400;
+    return parseInt(a) % 86400;
   });
 
   var x = d3.scale.linear()
