@@ -62,7 +62,14 @@ svg.selectAll("text.month")
 
 
 
-d3.csv("/data/net_usage_daily.csv", function(error, csv) {
+d3.text("/data/net_usage_daily.csv", "text/csv", function(error, txt) {
+  var csv = d3.csv.parseRows(txt).map(function(d) {
+    return {
+      date: d[0],
+      mib: d[1]
+    }
+  });
+
   var dateFormat = d3.format("02d");
 
   var data = d3.nest()
