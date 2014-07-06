@@ -1,4 +1,11 @@
-d3.csv("/data/computer_probability.csv", function(err, data) {
+d3.text("/data/computer_probability.csv", "text/csv", function(err, txt) {
+  var data = d3.csv.parseRows(txt).map(function(d) {
+    return {
+      timestart: d[0],
+      occ: d[1]
+    };
+  });
+
   var BASE_TICKS = [0, 7200, 14400, 21600, 28800, 36000, 43200, 50400, 57600, 64800, 72000, 79200, 86400];
 
   var margin = {top: 20, right: 20, bottom: 40, left: 20},
@@ -42,14 +49,14 @@ d3.csv("/data/computer_probability.csv", function(err, data) {
 
   var line = d3.svg.line()
     .interpolate("basis")
-    .x(function(d) { return x(parseInt(d.timestart)); })
-    .y(function(d) { return y(parseInt(d.occ)); });
+    .x(function(d) { return x(d.timestart); })
+    .y(function(d) { return y(d.occ); });
 
   var area = d3.svg.area()
     .interpolate("basis")
     .y0(height)
-    .x(function(d) { return x(parseInt(d.timestart)); })
-    .y1(function(d) { return y(parseInt(d.occ)); });
+    .x(function(d) { return x(d.timestart); })
+    .y1(function(d) { return y(d.occ); });
 
   svg.append("path")
       .datum(data)
