@@ -1,4 +1,14 @@
-d3.csv("/data/stats.csv", function(err, data) {
+d3.text("/data/stats.csv", "text/csv", function(err, txt) {
+  var data = d3.csv.parseRows(txt).map(function(d) {
+    return  {
+      title: d[0],
+      value: d[1],
+      subtext: d[2],
+      special: d[3],
+      color: d[4] || null
+    };
+  });
+
   var cards = d3.select("#cards")
       .selectAll("li").data(data)
     .enter().append("li");
