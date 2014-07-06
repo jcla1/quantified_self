@@ -36,8 +36,16 @@ function round6(d, end) {
   return block
 }
 
+d3.text("/data/activity_log.csv", "text/csv", function(txt) {
+  var data = d3.csv.parseRows(txt).map(function(d) {
+    return {
+      duration: d[2],
+      start_ts: d[0],
+      end_ts: d[1],
+      program: d[3]
+    };
+  });
 
-d3.csv("/data/activity_log.csv", function(data) {
   var margin = {top: 10, right: 7, bottom: 20, left: 40},
     width = 860 - margin.left - margin.right,
     height = 520 - margin.top - margin.bottom;
