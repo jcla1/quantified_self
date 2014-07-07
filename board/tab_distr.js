@@ -6,8 +6,8 @@ d3.text("/data/tab_distr.csv", "text/csv", function(err, txt) {
     height = 170 - margin.top - margin.bottom;
 
   var values = raw.reduce(function(a, b) {
-    return a.concat(d3.range(b[0]).map(function() {
-        return b[1];
+    return a.concat(d3.range(b[1]).map(function() {
+        return b[0];
     }))
   }, []);
 

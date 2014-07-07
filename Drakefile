@@ -19,7 +19,7 @@ data/net_usage_daily.csv <-
     tail -qn 1 $[NET_LOGS] | cut -d, -f1,3 > $OUTPUT
 
 data/tab_distr.csv <-
-    cat $[ACTIVITY_LOGS] | cut -d, -f7 | /usr/local/bin/sed /^$/d | sort | uniq -c | sort | /usr/local/bin/sed "s/^ *//g" | tr " " "," > $OUTPUT
+    python collectors/tab_distr.py $[ACTIVITY_LOGS] > $OUTPUT
 
 data/search_distr.csv <-
     cat $[URLS_LOGS] | cut -d, -f1,3 | grep www.google.com/search | cut -d, -f1 > $OUTPUT
