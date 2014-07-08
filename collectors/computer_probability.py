@@ -1,4 +1,4 @@
-from sys import stdin
+import sys
 import csv
 
 # How big shall the segments be to group the activity into?
@@ -13,7 +13,8 @@ def seconds_adder(seconds, r):
     return seconds
 
 def main():
-    reader = csv.reader(stdin)
+    with open(sys.argv[1]) as f:
+        records = list(csv.reader(f))
 
     seconds = [0] * 86400
 
@@ -23,7 +24,7 @@ def main():
                     (int(x[1])%86400) if (int(x[1])%86400) != 0 else 86400)
                 for x in filter(
                     lambda x: x[3] == "All Programs",
-            reader)], seconds)
+            records)], seconds)
 
     print "\n".join(
             ["%d,%d" % (i*SECOND_GROUPS, v)
