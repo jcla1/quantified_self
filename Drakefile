@@ -10,7 +10,7 @@ NET_LOGS="$[LOG_BASE]net_$[DATE]*"
 NUM_DAYS=$(perl -e 'use POSIX qw(strftime); $str = strftime "%j", localtime; print $str;')
 
 data/activity_log.csv <-
-    cat $[ACTIVITY_LOGS] | python collectors/activity.py > $OUTPUT
+    python collectors/activity.py $[ACTIVITY_LOGS] > $OUTPUT
 
 data/computer_probability.csv <- data/activity_log.csv
     cat $INPUT | python collectors/computer_probability.py > $OUTPUT

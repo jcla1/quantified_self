@@ -1,4 +1,4 @@
-from sys import stdin, stdout
+import sys
 from itertools import groupby
 import csv
 
@@ -55,8 +55,13 @@ def main():
     time_lambda = lambda x: -1 if int(x[2]) > 300 else int(x[0]) + timezone_offsets[x[1]]
     invalid_times = lambda x: x > 0
 
-    reader = csv.reader(stdin)
-    s = sorted(reader, key=program_name)
+    records = []
+
+    for filename in sys.argv[1:]:
+        with open(filename) as f:
+            records += list(csv.reader(f))
+
+    s = sorted(records, key=program_name)
 
     all_program_times = []
     activity_rows = []
@@ -76,7 +81,7 @@ def main():
 
 
     #print "start_ts,end_ts,duration,program"
-    csv.writer(stdout).writerows(activity_rows)
+    csv.writer(sys.stdout).writerows(activity_rows)
 
 if __name__ == "__main__":
     main()
