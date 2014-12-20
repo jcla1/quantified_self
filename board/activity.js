@@ -10,12 +10,15 @@ var icons = {
 }
 
 function timeInterval(d) {
-  var txt = '', days = parseInt(d / 86400), hours, minutes, seconds;
+  var txt = '',
+    days = parseInt(d / 86400),
+    hours, minutes, seconds;
   d %= 86400;
   hours = parseInt(d / 3600);
   d %= 3600;
   minutes = parseInt(d / 60);
   seconds = d % 60;
+
   function fmt(prefix, n, suffix) {
     if (n === 0) {
       return prefix
@@ -28,44 +31,30 @@ function timeInterval(d) {
   return fmt(txt, seconds, 's')
 }
 
-function round6(d, end) {
-  var block = (d.getUTCHours() * 10) + (d.getUTCMinutes() / 6);
-  if (end == true && block == 0) {
-    return 240
-  }
-  return block
-}
-
 d3.text("/data/activity_log.csv", "text/csv", function(txt) {
   var data = d3.csv.parseRows(txt).map(function(d) {
     return {
-      duration: d[2],
       start_ts: d[0],
       end_ts: d[1],
+      duration: d[2],
       program: d[3]
     };
   });
 
-  var margin = {top: 10, right: 7, bottom: 20, left: 40},
+  var margin = { top: 10, right: 7, bottom: 20, left: 40 },
     width = 860 - margin.left - margin.right,
     height = 520 - margin.top - margin.bottom;
 
   var y = d3.scale.linear()
-      .range([height, 0])
-      .domain([0, 240])
-
-  var durationY = d3.scale.linear()
-      .range([0, height])
-      .domain([0, 86400])
+    .range([height, 0])
+    .domain([0, 86400]);
 
   var x = d3.time.scale()
-      .range([0, width])
-      .domain([new Date(2014, 0, 1), new Date(2014, 11, 31)]).nice()
-  var dayFormat = d3.time.format('%y%m%d')
-
+    .range([0, width])
+    .domain([new Date(2014, 0, 1), new Date(2014, 11, 31)]).nice();
 
   var durationMap = {};
-  data.forEach(function(d){
+  data.forEach(function(d) {
     d.duration = +d.duration;
     d.start_ts = +d.start_ts;
     d.end_ts = +d.end_ts;
@@ -73,31 +62,33 @@ d3.text("/data/activity_log.csv", "text/csv", function(txt) {
     var start_dt = new Date(d.start_ts * 1000);
     var end_dt = new Date(d.end_ts * 1000);
 
-    d.day = dayFormat(start_dt);
-    var end = round6(end_dt, true);
-    d.height = height - y(end - round6(start_dt));
-    d.durationBlock = d.end_ts - d.start_ts; // in seconds
-    d.durationHeight = durationY(d.durationBlock);
-    durationMap[d.program] = (durationMap[d.program] || 0) + d.duration;
-    d.y = y(end);
-    d.x = x(d3.time.day(start_dt))
+    d.height = height - y(d.duration);
+    d.y = Math.max(height - y(d.end_ts % 86400) - d.height, 0);
+    d.x = x(d3.time.day(start_dt));
 
+    durationMap[d.program] = (durationMap[d.program] || 0) + d.duration;
   });
 
   var nestByProgram = d3.nest()
-    .key(function(d) { return d.program; })
+    .key(function(d) {
+      return d.program;
+    })
     .map(data);
 
   var programs = d3.keys(nestByProgram)
-    .sort(function(a, b){var aa=durationMap[a], bb= durationMap[b]; if (aa < bb) {return 1;} return -1})
+    .sort(function(a, b) {
+      return (durationMap[a] < durationMap[b]) ? 1 : -1;
+    })
 
   d3.select("#computer_activity_programs")
     .selectAll("a")
     .data(programs)
     .enter().append("a")
-    .attr("class", function(d, i){return "activity_btn" + (i == 0 ? ' active' : '')})
+    .attr("class", function(d, i) {
+      return "activity_btn" + (i == 0 ? ' active' : '')
+    })
     .on("click", function(d, i) {
-      d3.select("#computer_activity_programs").selectAll("a").classed("active", function(dd, ii){
+      d3.select("#computer_activity_programs").selectAll("a").classed("active", function(dd, ii) {
         return i == ii;
       })
       update(nestByProgram[d]);
@@ -105,125 +96,144 @@ d3.text("/data/activity_log.csv", "text/csv", function(txt) {
     .append("img")
     .attr("width", 16)
     .attr("height", 16)
-    .attr("src", function(d) {return icons[d]})
-    .attr("alt", function(d) {return d;})
-    .attr("title", function(d) {return d + " - " + timeInterval(durationMap[d]);})
+    .attr("src", function(d) {
+      return icons[d]
+    })
+    .attr("alt", function(d) {
+      return d;
+    })
+    .attr("title", function(d) {
+      return d + " - " + timeInterval(durationMap[d]);
+    });
 
   var svg = d3.select("#activity").append("svg")
-      .attr("width", 860)
-      .attr("height", 530)
+    .attr("width", 860)
+    .attr("height", 530)
     .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
   var xAxis = d3.svg.axis()
-      .scale(x)
-      .orient("bottom")
-      .tickFormat(d3.time.format("%b"))
+    .scale(x)
+    .orient("bottom")
+    .tickFormat(d3.time.format("%b"));
 
   svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis)
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis);
 
   svg.selectAll(".x.axis text")
-      .style("text-anchor", "middle")
-      .attr("x", 36)
-      .attr("y", 7)
+    .style("text-anchor", "middle")
+    .attr("x", 36)
+    .attr("y", 7);
 
   var bands = svg.append("g")
-    .attr("class", "bands")
+    .attr("class", "bands");
 
-    bands.selectAll(".band")
-      .data(d3.range(24))
-        .enter().append("rect")
-        .attr("class", function(d, i){return i % 2 == 0 ? "band band_even" : "band band_odd";})
-        .attr("x", 0 - margin.left)
-        .attr("width", width + margin.left)
-        .attr("y", function(d){return y(d * 10) - (height / 24);})
-        .attr("height", height/24);
+  bands.selectAll(".band")
+    .data(d3.range(24))
+    .enter().append("rect")
+    .attr("class", function(d, i) {
+      return i % 2 == 0 ? "band band_even" : "band band_odd";
+    })
+    .attr("x", 0 - margin.left)
+    .attr("width", width + margin.left)
+    .attr("y", function(d) {
+      return y(d * 3600) - (height / 24);
+    })
+    .attr("height", height / 24);
 
-    var number_format = d3.format('d');
+  var number_format = d3.format('d');
 
-    function hrTickFormatter(hr){
-      if (hr == 24 || hr == 0 ) {
-        return "12a"
-      }
-      if (hr < 12 ) {
-        return hr + "a"
-      }
-      if (hr === 12) {
-        return hr + "p"
-      }
-      return (hr % 12) + "p"
+  function hrTickFormatter(hr) {
+    if (hr == 24 || hr == 0) {
+      return "12a"
     }
-
-    function updateAxis() {
-      var b = bands.selectAll("text")
-        .data(d3.range(24).reverse());
-        b.transition()
-        .text(function(d){
-          return hrTickFormatter(d);
-        })
-
-        b.enter().append("text")
-        .attr("x", -12)
-        .attr("y", function(d){return y((23-d) * 10) - ((height / 24) / 2)})
-        .attr("dy", ".5em")
-        .style("text-anchor", "end")
-        .transition()
-        .text(function(d){
-          return hrTickFormatter(d);
-        })
-        b.exit()
-        .remove()
+    if (hr < 12) {
+      return hr + "a"
     }
-    updateAxis();
-
-
-    var datasvg = svg.append("g")
-    var rect = datasvg.selectAll("rect")
-
-    var lastData;
-    function update(datum) {
-      lastData = datum;
-      rect = datasvg.selectAll("rect");
-      var durationOffset = {}
-      var a = rect.data(datum);
-
-      function yCalc(d) {
-          return height - (d.y+d.durationHeight);
-      }
-
-      // update
-      a
-      .transition()
-        .delay(10)
-        .duration(900)
-        .attr("x", function(d) { return d.x; })
-      .transition()
-        .delay(900)
-        .duration(900)
-        .attr("y", yCalc)
-        .attr("height", function(d){ return d.height })
-
-      a.enter().append("rect")
-        .attr("class", function(d, i){ return "activity"; })
-        .attr("width", 1)
-        .style("fill", "#2CA02C")
-        .attr("x", function(d) { return d.x; })
-      .transition()
-        .delay(900)
-        .duration(900)
-        .attr("y", yCalc)
-        .attr("height", function(d){ return d.height })
-
-      a.exit()
-        .transition()
-          .delay(10)
-          .duration(900)
-          .attr("x",function(d) { return width + d.x})
-          .attr("height", 0)
-        .remove();
+    if (hr === 12) {
+      return hr + "p"
     }
-    update(nestByProgram["All Programs"]);
+    return (hr % 12) + "p"
+  }
+
+  function updateAxis() {
+    var b = bands.selectAll("text")
+      .data(d3.range(24).reverse());
+
+    b.transition()
+      .text(function(d) {
+        return hrTickFormatter(d);
+      });
+
+    b.enter().append("text")
+      .attr("x", -12)
+      .attr("y", function(d) {
+        return y((23 - d) * 3600) - ((height / 24) / 2)
+      })
+      .attr("dy", ".5em")
+      .style("text-anchor", "end")
+      .transition()
+      .text(function(d) {
+        return hrTickFormatter(d);
+      });
+
+    b.exit().remove();
+  }
+  updateAxis();
+
+
+  var datasvg = svg.append("g");
+
+  function update(datum) {
+    var rect = datasvg.selectAll("rect");
+    var a = rect.data(datum);
+
+    a.enter().append("rect")
+      .attr("class", "activity")
+      .attr("width", 1)
+      .style("fill", "#2CA02C")
+      .attr("x", function(d) {
+        return d.x;
+      })
+      .transition()
+      .delay(900)
+      .duration(900)
+      .attr("y", function(d) {
+        return d.y;
+      })
+      .attr("height", function(d) {
+        return d.height;
+      });
+
+    a
+      .transition()
+      .delay(10)
+      .duration(900)
+      .attr("x", function(d) {
+        return d.x;
+      })
+      .transition()
+      .delay(900)
+      .duration(900)
+      .attr("y", function(d) {
+        return d.y;
+      })
+      .attr("height", function(d) {
+        return d.height;
+      });
+
+    a.exit()
+      .transition()
+      .delay(10)
+      .duration(900)
+      .attr("x", function(d) {
+        return width + d.x
+      })
+      .attr("height", 0)
+      .remove();
+  }
+
+  update(nestByProgram["All Programs"]);
 });

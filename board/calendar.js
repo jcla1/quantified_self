@@ -80,7 +80,7 @@ d3.text("/data/net_usage_daily.csv", "text/csv", function(error, txt) {
     .rollup(function(d) { return (parseFloat(d[0].mib)); })
     .map(csv);
 
-  color.domain(d3.extent(csv, function(d) { var a = parseFloat(d.mib); return a; }));
+  color.domain(d3.extent(csv, function(d) { return d.mib == 0 ? 1000 : Math.log(parseFloat(d.mib)); }));
 
   rect.filter(function(d) { return d in data; })
       .attr("class", function(d) { return "day " + color(data[d]); })

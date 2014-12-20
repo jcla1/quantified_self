@@ -7,7 +7,10 @@ import csv
 # time in sec since epoch in UTC!
 timezone_offsets = {
     "CEST": 7200,
-    "CET": 3600
+    "CET": 3600,
+    "BST": 3600,
+    "PDT": -25200,
+    "GMT": 0
 }
 
 def get_duration_end(start_index, times, duration_step=360):
@@ -23,7 +26,6 @@ def interval_to_row(t, program):
 
 def times_to_intervals(program, times):
     times.sort()
-
     rows = []
 
     i = 0
@@ -33,7 +35,7 @@ def times_to_intervals(program, times):
             start = times[i]
             end = times[end_index]
 
-            if (start % 86400) > (end % 86400):
+            if (start / 86400) < (end / 86400): # The start and end are on seperate days
                 row1 = interval_to_row([start, (end / 86400) * 86400], program)
                 row2 = interval_to_row([(end / 86400) * 86400, end], program)
 
