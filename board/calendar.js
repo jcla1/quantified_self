@@ -12,7 +12,7 @@ var color = d3.scale.quantize()
     .range(d3.range(8).map(function(d) { return "q" + d + "-11"; }));
 
 var svg = d3.select("#netusage").selectAll("svg")
-    .data(d3.range(2014, 2015))
+    .data(d3.range(2015, 2016))
   .enter().append("svg")
     .attr("width", width)
     .attr("height", height)

@@ -51,7 +51,7 @@ d3.text("/data/activity_log.csv", "text/csv", function(txt) {
 
   var x = d3.time.scale()
     .range([0, width])
-    .domain([new Date(2014, 0, 1), new Date(2014, 11, 31)]).nice();
+    .domain([new Date(2015, 0, 1), new Date(2015, 11, 31)]).nice();
 
   var durationMap = {};
   data.forEach(function(d) {
